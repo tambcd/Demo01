@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chúc Mừng 20/10 💖</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+<style>
+  * {margin:0; padding:0; box-sizing:border-box;}
+  html, body {
+    width:100%; height:100%;
+    overflow:hidden;
+    background: radial-gradient(ellipse at bottom, #0d0d0d 0%, #000 100%);
+    font-family:'Great Vibes', cursive;
+  }
+
+  /* Trái tim nền */
+  .bg-heart {
+    position:absolute;
+    color:#ff6699;
+    font-size:10px;
+    opacity:0.7;
+    animation: twinkle 2s infinite ease-in-out;
+    text-shadow:0 0 5px #ff99cc, 0 0 10px #ff66ff;
+  }
+  @keyframes twinkle {
+    0%,100% {opacity:0.2; transform:scale(1);}
+    50% {opacity:1; transform:scale(1.3);}
+  }
+
+  /* Chữ rơi căn giữa */
+  .wish {
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    color:#ffb6ff;
+    font-size:32px;
+    text-align:center;
+    white-space:nowrap;
+    text-shadow:0 0 10px #ff99ff, 0 0 20px #cc66ff;
+    opacity:0;
+    animation: fall 7s linear forwards;
+    pointer-events:none;
+  }
+  @keyframes fall {
+    0% {transform: translate(-50%, -60px) scale(1); opacity:0;}
+    10% {opacity:1;}
+    90% {opacity:1;}
+    100% {transform: translate(-50%, 100vh) scale(0.9); opacity:0;}
+  }
+
+  /* Trái tim bay tầng trên */
+  .heart {
+    position:absolute;
+    color:#ff6699;
+    font-size:20px;
+    text-shadow:0 0 8px #ff66cc;
+    animation: float 6s ease-in-out infinite;
+    opacity:0.7;
+  }
+  @keyframes float {
+    0% {transform: translateY(0) translateX(0);}
+    50% {transform: translateY(-40px) translateX(20px);}
+    100% {transform: translateY(0) translateX(0);}
+  }
+
+  canvas {
+    position:fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:0;
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+<script>
+const wishes = [
+  "Chúc em luôn xinh đẹp và hạnh phúc 💖",
+  "20/10 vui vẻ nhé 🌸",
+  "Cảm ơn vì em luôn ở đây 💜",
+  "Chúc mẹ luôn mạnh khỏe và bình an ❤️",
+  "Em là điều tuyệt vời nhất 💕",
+  "Chúc các chị em luôn rạng rỡ như hoa 🌷",
+  "Chúc em yêu luôn được yêu thương 💗",
+  "Happy Vietnamese Women’s Day 💫",
+  "Hãy luôn tự tin và tỏa sáng 🌟",
+  "Anh chúc em luôn hạnh phúc nhé 💞",
+  "20/10 — Một nửa thế giới tỏa sáng vì em 💐"
+];
+
+// 💕 Tạo trái tim nền lấp lánh
+for(let i=0;i<120;i++){
+  const h=document.createElement('div');
+  h.className='bg-heart';
+  h.textContent='❤';
+  h.style.top=Math.random()*100+'%';
+  h.style.left=Math.random()*100+'%';
+  h.style.fontSize=(6+Math.random()*10)+'px';
+  h.style.animationDuration=(1+Math.random()*3)+'s';
+  document.body.appendChild(h);
+}
+
+// 🌸 Tạo lời chúc căn giữa rơi
+function createWish(){
+  const w=document.createElement('div');
+  w.className='wish';
+  w.textContent=wishes[Math.floor(Math.random()*wishes.length)];
+  w.style.top='0px';
+  document.body.appendChild(w);
+  setTimeout(()=>{w.remove();},7000);
+}
+setInterval(createWish,900);
+
+// 💖 Trái tim bay nhẹ ở trên
+function createHeart(){
+  const h=document.createElement('div');
+  h.className='heart';
+  h.textContent='❤';
+  h.style.left=Math.random()*100+'%';
+  h.style.top=Math.random()*100+'%';
+  h.style.fontSize=(10+Math.random()*20)+'px';
+  h.style.animationDuration=(5+Math.random()*5)+'s';
+  document.body.appendChild(h);
+  setTimeout(()=>{h.remove();},6000);
+}
+setInterval(createHeart,1000);
+
+// 🌀 Không gian 3D xoay bằng chuột
+let scene=new THREE.Scene();
+let camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);
+let renderer=new THREE.WebGLRenderer({canvas:document.getElementById('scene'),alpha:true});
+renderer.setSize(window.innerWidth,window.innerHeight);
+
+let geometry=new THREE.SphereGeometry(0.05,16,16);
+let material=new THREE.MeshBasicMaterial({color:0xff66ff});
+let particles=[];
+for(let i=0;i<200;i++){
+  let p=new THREE.Mesh(geometry,material);
+  p.position.set((Math.random()-0.5)*6,(Math.random()-0.5)*6,(Math.random()-0.5)*6);
+  scene.add(p);
+  particles.push(p);
+}
+camera.position.z=5;
+
+let mouseX=0,mouseY=0,targetX=0,targetY=0;
+document.addEventListener('mousemove',(e)=>{
+  mouseX=(e.clientX/window.innerWidth)*2-1;
+  mouseY=-(e.clientY/window.innerHeight)*2+1;
+});
+document.addEventListener('touchmove',(e)=>{
+  mouseX=(e.touches[0].clientX/window.innerWidth)*2-1;
+  mouseY=-(e.touches[0].clientY/window.innerHeight)*2+1;
+});
+
+function animate(){
+  requestAnimationFrame(animate);
+  targetX=mouseX*0.5;
+  targetY=mouseY*0.5;
+  scene.rotation.y+=0.002+(targetX-scene.rotation.y)*0.05;
+  scene.rotation.x+=(targetY-scene.rotation.x)*0.05;
+  particles.forEach(p=>{
+    p.rotation.x+=0.01;
+    p.rotation.y+=0.01;
+  });
+  renderer.render(scene,camera);
+}
+animate();
+
+window.addEventListener('resize',()=>{
+  camera.aspect=window.innerWidth/window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth,window.innerHeight);
+});
+</script>
+</body>
+</html>
